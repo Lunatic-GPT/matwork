@@ -1,0 +1,24 @@
+function tssorted_exclude_bad_trials(fname_sorted,ts1d,pk,bl,nTR_trl)
+  
+
+ntrl = length(ts1d)/nTR_trl;
+
+[d,info] = BrikLoad(fname_sorted);
+
+for i=1:ntrl
+     ind = [];
+    if ~remove_trial(ts((i-1)*nTR_trl+1:i*nTR_trl),pk,bl)
+      ind = [ind,(i-1)*nTR_trl+1:i*nTR_trl];
+    end
+    
+    
+end
+
+d2 = d(:,:,:,ind);
+
+history = sprintf('tssorted_exclude_bad_trials(%s,
+WriteBrikEZ(d2,info,history,prefix);
+
+
+function rm = remove_trial(ts,pk,bl)
+

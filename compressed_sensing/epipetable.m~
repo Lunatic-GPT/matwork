@@ -1,0 +1,5 @@
+function epipetable(npe,reduction,fname)
+
+fid=fopen(fname);
+
+mask=cstable_1dpower(npe,reduction,npe,1,'tmp.1D');

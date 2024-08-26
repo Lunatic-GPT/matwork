@@ -1,0 +1,3 @@
+data: test_kernel5.mat; test_kernel9.mat: iro = 1;
+kernel 5 and kernel 9 give very similar images:
+but kernel 5 is much faster, so use kernel 5

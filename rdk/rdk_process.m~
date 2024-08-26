@@ -1,0 +1,8 @@
+% retinotopy preprocess
+flist = {'Ret_ring1','Ret_ring2','Ret_ring3','Ret_wedge1','Ret_wedge2','Ret_wedge3','anatomy'};
+acquisition_time_dicom(flist);
+afni_preprocess_baylor(flist(1:end-1),'anatomy');
+
+!3dcalc -a s1_dtr_norm+orig'[2..193]' -b s2_dtr_norm+orig'[2..193]' -c s3_dtr_norm+orig'[2..193]' -expr '(a+b+c)/3' -prefix ring_dtr_norm
+!3dcalc -a s4_dtr_norm+orig'[2..193]' -b s5_dtr_norm+orig'[2..193]' -c s6_dtr_norm_194brk+orig'[2..193]' -expr '(a+b+c)/3' -prefix wedge_dtr_norm
+

@@ -1,0 +1,38 @@
+function epi_B1map(f_prefix)
+
+[d,info]=BrikLoad([f_prefix,'+orig']);
+if ndims(d) ==3
+    d = reshape(d,[size(d,1),size(d,2),1,size(d,3)]);
+end
+
+tpwr1=readPar([f_prefix,'.fid/procpar'],'tpwr1');
+ref_pos=readPar([f_prefix,'.fid/procpar'],'ref_pos');
+
+tpwr1(ref_pos+1)=[];
+
+[t_sort,ind]=sort(tpwr1);
+   
+d_sort = d(:,:,:,ind);
+
+WriteBrikEZ(d_sort,info,'epi_B1map',[f_prefix,'_sort']);
+
+b1= zeros(size(d,1),size(d,2),size(d,3),2);
+
+for i=1:size(d,1)
+    for j=1:size(d,2)
+        for k=1:size(d,3)
+            x=exp(tpwr1/20);
+            y=d(i,j,k,:);
+            x = sort(x);
+            y=sort(y);
+            maxtab = peakdet(y,max(y)/10);
+            
+            [b,r] = nlinfit(x(:),y(:),@cosfita,[max(y),1/x(maxtab(1,1))/4]);
+            b1(i,j,k,1) = b(2);
+            b1(i,j,k,2)=1-sum(r.^2)/sum(y.^2);
+        end
+    end
+end
+
+WriteBrikEZ(b1,info,'epi_B1map',[f_prefix,'_map']);
+

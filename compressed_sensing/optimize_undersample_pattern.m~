@@ -1,0 +1,28 @@
+a=fftmat(64);
+a=circshift(a,[32,32]);
+ia=conj(a);
+fid_prefix='gems_cs_05';
+
+%m=mask_cs1d(fid_prefix);
+
+
+N=size(m,3);
+reduction=4;
+X=zeros(N*16,64);
+for j=1:size(m,2)
+for i=0:N-1
+%    m2=repmat(m(:,j,i+1),[1,64]);
+
+    m2=zeros(64,64);
+    ind=randperm(64);
+    m2(ind(1:16),:)=1;
+    X(i*16+1:i*16+16,:)=reshape(a(m2>0),[16,64]);
+end
+b=X'*X;
+disp(trace(inv(b)));
+
+end
+
+    
+    
+    

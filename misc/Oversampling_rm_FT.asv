@@ -1,0 +1,13 @@
+function d2=Oversampling_rm_FT(d)
+
+ftmpData=ifft1c(d,1);
+
+len=length(ftmpData);
+
+l4=
+d2=ftmpData(len/4+1:end-len/4,:);
+
+d2=fft1c(d2,1);
+
+
+

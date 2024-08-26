@@ -1,0 +1,47 @@
+balanced anova1, p values: (4 subjects, 3 coherence) 
+1: P values: 0.0066
+Single subject: 0.4978 ;0.0053 ;0.0000 ;0.0000 ;
+
+2: P values: 0.0894
+Single subject: 0.7264 ;0.3451 ;0.0001 ;0.0011 ;
+
+3: P values: 0.6593
+Single subject: 0.5715 ;0.0151 ;0.0713 ;0.2203 ;
+
+4: P values: 0.2048
+Single subject: 0.2027 ;0.0063 ;0.0501 ;0.3632 ;
+
+5: P values: 0.0508
+Single subject: 0.0000 ;0.0007 ;0.0035 ;0.0060 ;
+
+V5glm: P values: 0.0130
+Single subject: 0.0000 ;0.0011 ;0.0004 ;0.0029 ;
+
+STglm: P values: 0.0574
+Single subject: 0.0697 ;0.0005 ;0.0000 ;
+
+V3Aglm: P values: 0.0727
+Single subject: 0.0000 ;0.0015 ;0.0010 ;0.1954 ;
+
+LSglm: P values: 0.0671
+Single subject: 0.2913 ;0.0000 ;0.0091 ;
+
+IPSglm: P values: 0.0011
+Single subject: 0.0000 ;0.0001 ;
+
+CCglm: P value: 0.0008
+
+PreCglm: P value: 0.0026
+
+balanced anova1, p values: (3 subjects, 4 coherence) 
+1: P values: 0.0317
+Single subject: 0.0073 ;0.0019 ;0.0001 ;
+2: P values: 0.2090
+Single subject: 0.0366 ;0.4504 ;0.0006 ;
+3: P values: 0.6861
+Single subject: 0.1995 ;0.0158 ;0.1318 ;
+4: P values: 0.2856
+Single subject: 0.0633 ;0.0079 ;0.0458 ;
+5: P values: 0.0245
+Single subject: 0.0000 ;0.0002 ;0.0010 ;
+

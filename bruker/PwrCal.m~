@@ -1,0 +1,28 @@
+function PwrCal(fname)
+a=readb_fid(fname);
+
+pref=readbPar(fullfile(fname,'method'),'PVM_RefAttCh1');
+
+pwr=readbPar(fullfile(fname,'method'),'pwrlist');
+
+pwr=pwr-pref;
+
+pwr=pwr';
+f=db2factor(pwr);
+
+
+fa=fft1c(a,1);
+x=1./f;
+y=abs(fa(31,:));
+
+x=mean(abs(fa),1);
+
+figure;plot(x,y,'ko');
+
+
+options=optimset('MaxFunEvals',40);
+beta=lsqcurvefit(@sinfita,[max(y),1],x,y,[],[],options);
+disp(factor2db(beta(2))+pref);
+hold on;
+plot(x,sinfita(beta,x),'r');
+

@@ -1,0 +1,44 @@
+function spa_mrui(fname,frange,fshift,f0)
+% spa_mrui(fname,frange,fshift,f0)
+% plot an spectrum array in mrui format.
+% f0 the center frequency in ppm
+% frange: the frequency range to plot
+% fshift: right shift of consecutive spectrum
+
+%Lac 1.5
+% NAA: 2
+% Glu: 
+if ~exist('f0','var')
+    f0=-730/400+4.7;
+end
+
+[h,a]=read_mrui(fname);
+
+sw=10;  % 10 ppm
+
+figure;
+
+a=a-repmat(mean(a(1600:end,:),1),[2043,1]);
+
+t=(1:2043)'/4000;
+a=a.*repmat(exp(-t.^2/2/0.2^2),[1,6]);
+fa=fft(a,[],1);
+fa=fftshift(fa,1);
+%%
+xf=sw*((1:2043)-1022)/2043+f0;
+
+ind=find(frange(1)<xf&frange(2)>xf);
+
+
+
+figure;
+
+for i=1:size(a,2)
+    
+plot(xf(ind)-(i-1)*fshift,real(fa(ind,i)),'r-');
+hold on;
+end
+set(gca,'XDir', 'reverse','FontSize',16,'XTick',0:5);
+xlim([frange(1)-fshift*(size(a,2)-1),frange(2)]);
+%ylim([-0.1,0.5]);
+

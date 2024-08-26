@@ -1,0 +1,1072 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en"><head>
+
+  
+    <!-- request.URI=/matlabcentral/scrape.html -->
+    <!-- request.docBase=/matlabcentral/ -->
+    <!-- request.locale.language=en -->
+    <!-- request.locale.country= -->
+    <!-- START OF GLOBAL NAV -->
+  <link href="171538_files/sitewide.css" rel="stylesheet" type="text/css">
+  <link href="171538_files/mlc.css" rel="stylesheet" type="text/css">
+  <!--[if lt IE 7]>
+  <link href="/matlabcentral/css/ie6down.css" type="text/css" rel="stylesheet">
+  <![endif]-->
+
+    
+    <meta content="text/html; charset=UTF-8" http-equiv="content-type">
+<meta name="keywords" content="file exchange, newsgroup access, MATLAB Central, MATLAB community, MATLAB and Simulink community">
+<meta name="description" content="file exchange and newsgroup access for the MATLAB and Simulink user community">
+<link href="171538_files/sitewide.css" rel="stylesheet" type="text/css">
+<link href="171538_files/mlc.css" rel="stylesheet" type="text/css">
+<title>MATLAB Central - Newsreader - Running GUI function from command line</title>
+<link type="text/css" rel="stylesheet" href="171538_files/newsreader.css" media="screen">
+
+<meta name="keywords" content="file exchange, newsgroup access, matlab central, matlab community, matlab and simulink community">
+<meta name="description" content="file exchange and newsgroup access for the MATLAB &amp; Simulink user community">
+
+<script src="171538_files/prototype.js" type="text/javascript"></script>
+<script src="171538_files/tags.js" type="text/javascript"></script>
+<style type="text/css">
+<!--
+.recentlyadded {background-color:#FFFFFF; padding-left:6px; padding-top:3px; padding-bottom:4px; font-weight:bold; font-size:9pt; border-top:1px solid #243462; border-bottom:1px solid #243462 }
+td.recentheader {background-color:#FFFFFF; font-size: 9pt; padding:3px 3px 3px 6px; font-weight: bold; }
+td.recenttext {padding:7px; font-size:9pt; }
+ul.recentlist {list-style-image: url(/matlabcentral/images/bullet.gif) ; font-size:90%; margin-top:8px}
+div.recentul ul{margin-left:0}
+div.recentul a:link{text-decoration:none; font-size:86%}
+div.recentul a:visited{text-decoration:none; font-size:86%}
+div.recentul a:hover{text-decoration:underline; font-size:86%}
+ul {margin-top:0px; margin-bottom:5px; margin-left:17px;}
+div.mainbody {padding-top:30px}
+#rcol {background-color:#FFFFFF; font-size:9pt; }
+.section {cursor:pointer}
+div.sectioncontent {padding:10px; background-color:whitesmoke; border:1px solid #405B94; border-top:none; height:110px; overflow-y:auto}
+div.sectioncontentBottom {height:140px; padding:10px; background-color:whitesmoke; border:1px solid #405B94; border-top:none; overflow-y:auto}
+html>body div.sectioncontent, html>body div.sectioncontentBottom  {overflow:auto}
+#rcol td.pad  {padding:3px 5px 4px 11px; background-color:#F1F1F1; border-left:1px solid #D0D0D0; border-right:1px solid #D0D0D0}	
+#rcol h2 {margin-top:0}
+.sep {padding-bottom:8px}
+h1 {font-size:94%; margin-bottom:0}
+h2 {color:#000066; font-size:90%}
+h3 {margin-top:10px; margin-bottom:0}
+.recentul a.small:link, .recentul a.small:visited {font-size:8pt; text-decoration:none}
+-->
+</style>
+<script type="text/javascript">
+
+var horizontal_offset="-150px" //horizontal offset of hint box from anchor link
+var login_state="1"
+/////No further editting needed
+
+var vertical_offset="20px" //horizontal offset of hint box from anchor link. No need to change.
+var ie=document.all
+var ns6=document.getElementById&&!document.all
+
+function getposOffset(what, offsettype){
+var totaloffset=(offsettype=="left")? what.offsetLeft : what.offsetTop;
+var parentEl=what.offsetParent;
+while (parentEl!=null){
+totaloffset=(offsettype=="left")? totaloffset+parentEl.offsetLeft : totaloffset+parentEl.offsetTop;
+parentEl=parentEl.offsetParent;
+}
+return totaloffset;
+}
+
+function iecompattest(){
+return (document.compatMode && document.compatMode!="BackCompat")? document.documentElement : document.body
+}
+
+function clearbrowseredge(obj, whichedge){
+var edgeoffset=(whichedge=="rightedge")? parseInt(horizontal_offset)*-1 : parseInt(vertical_offset)*-1
+if (whichedge=="rightedge"){
+var windowedge=ie && !window.opera? iecompattest().scrollLeft+iecompattest().clientWidth-30 : window.pageXOffset+window.innerWidth-40
+dropmenuobj.contentmeasure=dropmenuobj.offsetWidth
+if (windowedge-dropmenuobj.x < dropmenuobj.contentmeasure)
+edgeoffset=dropmenuobj.contentmeasure+obj.offsetWidth+parseInt(horizontal_offset)
+}
+else{
+var windowedge=ie && !window.opera? iecompattest().scrollTop+iecompattest().clientHeight-15 : window.pageYOffset+window.innerHeight-18
+dropmenuobj.contentmeasure=dropmenuobj.offsetHeight
+if (windowedge-dropmenuobj.y < dropmenuobj.contentmeasure)
+edgeoffset=dropmenuobj.contentmeasure-obj.offsetHeight
+}
+return edgeoffset
+}
+
+function showhint(menucontents, obj, e, tipwidth) {
+  if ((ie||ns6) && document.getElementById("hintbox")) {
+    dropmenuobj=document.getElementById("hintbox")
+    dropmenuobj.innerHTML=menucontents
+    dropmenuobj.style.left=dropmenuobj.style.top=-500
+    if (tipwidth != "") {
+      dropmenuobj.widthobj=dropmenuobj.style
+      dropmenuobj.widthobj.width=tipwidth
+    }
+    dropmenuobj.x=getposOffset(obj, "left")
+    dropmenuobj.y=getposOffset(obj, "top")
+    dropmenuobj.style.left=dropmenuobj.x-clearbrowseredge(obj, "rightedge")+obj.offsetWidth+"px"
+
+    offset_top  = obj.offsetHeight + dropmenuobj.y;
+    if (document.documentElement["clientHeight"]) {
+      if ((offset_top + dropmenuobj.offsetHeight) > document.documentElement["clientHeight"]) {
+        offset_top = offset_top - 18 - dropmenuobj.offsetHeight;
+      }
+    }
+    dropmenuobj.style.top = offset_top + "px";
+    dropmenuobj.style.visibility="visible"
+    obj.onmouseout=hidetip
+  }
+}
+
+function hidetip(e){
+dropmenuobj.style.visibility="hidden"
+dropmenuobj.style.left="-500px"
+}
+
+function createhintbox(){
+var divblock=document.createElement("div")
+divblock.setAttribute("id", "hintbox")
+document.body.appendChild(divblock)
+}
+
+if (window.addEventListener)
+window.addEventListener("load", createhintbox, false)
+else if (window.attachEvent)
+window.attachEvent("onload", createhintbox)
+else if (document.getElementById)
+window.onload=createhintbox
+
+</script>
+<script language="javascript">
+<!--
+function PopUp(page)
+{
+OpenWin = this.open(page, "page_mail", "toolbar=no,menubar=no,location=no,scrollbars=yes,resize=no,height=385,width=420");
+}
+//-->
+</script>
+<script language="JavaScript">
+<!--
+
+function MM_openBrWindow(theURL,winName,features) { //v2.0
+  window.open(theURL,winName,features);
+}
+//-->
+</script>
+<script language="javascript">
+<!--
+function PopUp(page)
+{
+OpenWin = this.open(page, "page_mail", "toolbar=no,menubar=no,location=no,scrollbars=yes,resize=no,height=385,width=420");
+}
+//-->
+</script>
+
+<script language="JavaScript">
+<!--
+
+function MM_openBrWindow(theURL,winName,features) { //v2.0
+  window.open(theURL,winName,features);
+}
+//-->
+</script>
+
+  </head><body>
+      
+
+<div id="header">
+  <div class="wrapper">
+  <!--put nothing in left div - only 11px wide shadow --> 
+    <div class="main">
+      <div id="logo"><a href="http://www.mathworks.de/matlabcentral/index.html" title="Home">&nbsp;</a></div>
+        <div id="headertools">
+        
+          
+<script language="JavaScript1.3" type="text/javascript">
+
+function submitForm(query){
+
+choice = document.forms['searchForm'].elements['search_submit'].value;
+
+if (choice == "entire1" || choice == "entire2" || choice == "contest" || choice == "matlabcentral" || choice == "blogs"){
+
+   var searchInputNames = new Array("db","prox","rorder","rprox","rdfreq","rwfreq","rlead","sufs","order","is_summary_on","ResultCount");
+   var searchInputValues = new Array("MSS","page","750","750","500","500","250","0","r","1","10");
+
+   for (var i=0; i<searchInputNames.length; i++){
+      var newElem = document.createElement("input");
+      newElem.type = "hidden";
+      newElem.name = searchInputNames[i];
+      newElem.value = searchInputValues[i];
+      document.forms['searchForm'].appendChild(newElem);
+   }
+
+   submit_action = '/cgi-bin/texis/webinator/search/';
+}
+
+switch(choice){
+   case "matlabcentral":
+      var newElem = document.createElement("input");
+      newElem.type = "hidden";
+      newElem.name = "matlabcentral";
+      newElem.value = "Matlabcentral";
+      document.forms['searchForm'].appendChild(newElem);
+
+      selected_index = 0;
+      break
+   case "fileexchange":
+      var newElem = document.createElement("input");
+      newElem.type = "hidden";
+      newElem.name = "term";
+      newElem.value = query.value;
+      newElem.classname = "formelem";
+      document.forms['searchForm'].appendChild(newElem);
+
+      submit_action = "/matlabcentral/fileexchange/";
+      selected_index = 1;
+      break
+   case "cssm":
+      var newElem = document.createElement("input");
+      newElem.type = "hidden";
+      newElem.name = "search_string";
+      newElem.value = query.value;
+      newElem.classname = "formelem";
+      document.forms['searchForm'].appendChild(newElem);
+
+			submit_action = "/matlabcentral/newsreader/search_results";
+      selected_index = 2;
+      break
+   case "linkexchange":
+      submit_action = "/cgi-bin/matlab/search.cgi";
+      selected_index = 3;
+      break
+   case "blogs":
+      var newElem = document.createElement("input");
+      newElem.type = "hidden";
+      newElem.name = "blogs";
+      newElem.value = "Blogs";
+      document.forms['searchForm'].appendChild(newElem);
+
+      selected_index = 4;
+      break
+   case "contest":
+      var newElem = document.createElement("input");
+      newElem.type = "hidden";
+      newElem.name = "contest";
+      newElem.value = "Contest";
+      document.forms['searchForm'].appendChild(newElem);
+
+      selected_index = 5;
+      break
+   case "entire1":
+      selected_index = 6;
+      break
+   case "entire2":
+      selected_index = 7;
+      break
+   default:
+      selected_index = 7;
+      break
+}
+
+document.forms['searchForm'].elements['search_submit'].selectedIndex = selected_index;
+document.forms['searchForm'].elements['query'].value = query.value;
+document.forms['searchForm'].action = submit_action;
+
+}
+
+</script>
+
+
+  <form name="searchForm" action="" onsubmit="submitForm(query)" method="post" style="margin: 5px 0px 0px; font-size: 90%;">
+          <label for="search">Search:</label>
+        <select name="search_submit" style="font-size: 9px;">
+          	<option selected="selected" value="matlabcentral">MATLAB Central</option>
+          	<option value="fileexchange">&nbsp;&nbsp;&nbsp;File Exchange</option>
+            <option value="cssm">&nbsp;&nbsp;&nbsp;MATLAB Newsgroup</option>
+          	<option value="linkexchange">&nbsp;&nbsp;&nbsp;Link Exchange</option>
+          	<option value="blogs">&nbsp;&nbsp;&nbsp;Blogs</option>
+          	<option value="contest">&nbsp;&nbsp;&nbsp;Programming Contest</option>
+          <option value="entire1">MathWorks.com</option>
+          <option value="entire2">&nbsp;&nbsp;&nbsp;All of MathWorks.com</option>
+        </select>
+<input name="query" size="10" class="formelem" value="" type="text">
+<input name="search" class="formelem gobutton" value=" Go " type="submit">
+</form>
+
+
+        <ol id="access2">
+            
+            
+              <a href="https://www.mathworks.com/accesslogin/index_fe.do?uri=http://www.mathworks.de/matlabcentral/newsreader/view_thread/171538">Login</a> 
+              <li class="first"><a href="https://www.mathworks.com/accesslogin/createProfile.do?uri=http://www.mathworks.de/matlabcentral/newsreader/view_thread/171538">Create Account</a></li>
+              <li><a href="https://www.mathworks.com/accesslogin/index_fe.do?uri=http://www.mathworks.de/matlabcentral/newsreader/view_thread/171538">Login</a></li>
+            
+        </ol>
+      </div>
+	  
+        <div id="globalnav">
+        <!-- from includes/global_nav.html -->
+        <ol>
+                <li class=";">
+                        <a href="http://www.mathworks.de/matlabcentral/fileexchange/">File Exchange</a> 
+                </li>
+                <li class="active">
+                        <a href="http://www.mathworks.de/matlabcentral/newsreader/">Newsgroup</a> 
+                </li>
+                <li class=";">
+                        <a href="http://www.mathworks.de/matlabcentral/link_exchange/">Link Exchange</a> 
+                </li>
+                <li class=";">
+                        <a href="http://blogs.mathworks.com/">&nbsp;&nbsp;Blogs&nbsp;&nbsp;</a> 
+                </li>
+                <li class=";">
+                        <a href="http://www.mathworks.de/contest/">&nbsp;Contest&nbsp;</a> 
+                </li>
+                <li class="icon mathworks">
+                        <a href="http://www.mathworks.de/">MathWorks.com</a> 
+                </li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <div id="middle">
+  <div class="wrapper">
+      <div id="colleft">
+    <ul id="localnav">
+      
+      
+      <li><a href="http://www.mathworks.de/matlabcentral/newsreader/about" class="hintanchor" onclick="window.open(this.href,'new_window','width=536,height=500,scrollbars=yes');return false;">About the MATLAB Newsgroup</a></li>
+      <li class="maincta"><a href="http://www.mathworks.de/matlabcentral/newsreader/create_message" class="post">Post A New Message</a></li>
+      
+      <li class="cta"><a href="http://www.mathworks.de/cgi-bin/page_mail_mlc.cgi?language=en&amp;host=www.mathworks.de&amp;document=www.mathworks.de%2Fmatlabcentral%2Fnewsreader%2Fview_thread%2F171538" class="email" onclick="window.open(this.href,'new_window','width=536,height=500,scrollbars=yes');return false;">E-mail this page</a></li>
+    </ul>
+  </div>
+
+<div class="columns2" id="mainbody">
+<table id="breadcrumbs" border="0" cellpadding="0" cellspacing="0">
+  <tbody><tr>
+    <td class="brdcrmbcell">
+      <a href="http://www.mathworks.de/matlabcentral/">MATLAB Central</a> &gt; 
+      <a href="http://www.mathworks.de/matlabcentral/newsreader/">MATLAB Newsreader</a>
+       &gt; Running GUI function from command line
+    </td>
+  </tr>
+</tbody></table>
+
+
+
+<table cellpadding="0" cellspacing="0" width="100%">
+  <tbody><tr>
+    <td width="600">
+      <!--SEARCHBOX-->
+    </td>
+    <!--MENUBUTTONS-->
+    <td align="right" valign="bottom">
+      <table cellpadding="0" cellspacing="0" height="auto">
+        <tbody><tr>
+          <td style="padding-bottom: 3px;" align="left" valign="bottom">
+            <div id="menu">
+              <div class="mainlinks" style="width: 100%; text-align: left;">
+                
+                  <a href="http://www.mathworks.de/matlabcentral/newsreader/create_thread_watchlist/171538" class="add">Add thread to My Watch List</a>
+                
+                <a href="http://www.mathworks.de/matlabcentral/newsreader/what_is_a_watchlist" class="hintanchor" onclick="window.open(this.href,'new_window','width=536,height=500,scrollbars=yes');return false;">What is a Watch List?</a>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </tbody></table>
+    </td>
+  </tr>
+</tbody></table>
+
+<div id="contentcontainer">
+<h1>Thread Subject: Running GUI function from command line</h1>
+
+
+  <a name="439474"></a>
+  <table class="threadlist" border="0" cellpadding="6" cellspacing="0" width="100%">
+    <tbody><tr class="messageheader">
+      <td>
+        <div class="messageheader">
+          <p style=""><strong>Subject:</strong> Running GUI function from command line</p>
+          <p><b>From:</b> <a href="http://www.mathworks.de/matlabcentral/newsreader/author/103885">William Slater</a></p>
+          <p><b>Date:</b> 25 Jun, 2008 18:04:02</p>
+          <p><strong>Message:</strong> 1 of 7 </p>
+        </div>
+        <div class="submenu"> 
+          <div class="submenuitem"><a href="http://www.mathworks.de/matlabcentral/newsreader/create_message?reply_id=439474">Reply to this message</a></div> 
+          <div class="submenuitem">
+            
+              <a href="http://www.mathworks.de/matlabcentral/newsreader/create_author_watchlist/103885?thread=171538" class="add">Add author to My Watch List</a>
+            
+          </div> 
+          <div class="submenuitem"><a href="http://www.mathworks.de/matlabcentral/newsreader/view_original/439474" onclick="window.open(this.href,'new_window','width=760,height=600');return false;">View original format</a></div>
+          <div class="submenuitem">
+        	
+            <a href="http://www.mathworks.de/matlabcentral/newsreader/flagged_as_spam/439474">Flag as spam</a>
+        	
+          </div> 
+        </div>
+      </td>
+    </tr>
+    <tr class="messagebody">
+      <td>
+        <p style="overflow-x: auto; width: 522px;">
+          Hey all:<br>
+<br>
+I've got a GUI already programmed that allows a user to<br>
+graphically filter time-based data structure.  For example,<br>
+data structure X may have the following fields:<br>
+<br>
+X.time<br>
+X.message_id<br>
+X.message_length<br>
+X.destination.net_number<br>
+X.destination.net_position<br>
+X.data_out<br>
+<br>
+The user graphically selects the field he wants to filter<br>
+by, chooses the filter method, enters the numerical filter<br>
+constraints, clicks the OK button, and gets his desired answer.<br>
+<br>
+The need has come up to be able to do this automatically<br>
+with predefined arguments (i.e., without the user needing<br>
+the GUI).  I don't really want to write a separate program<br>
+to reduce the GUI's functionality to a command-line level<br>
+program.  So I threw in some extra arguments to the GUI's<br>
+M-file in hopes to use the pre-existing code to do the job.<br>
+&nbsp;My hopes were to use these extra arguments to pre-populate<br>
+the GUI's fields and run the GUI's logic to spit out the<br>
+answer without having the GUI appear.<br>
+<br>
+I've figured out how to pass the arguments to the GUI's<br>
+M-file and pre-populate the uicontrols to said arguments. <br>
+However, I have not been able to figure out how to make the<br>
+GUI execute it's logic (normally done by pressing the OK<br>
+button).  As things stand now, the user has to click the OK<br>
+button and everything runs fine after that.  But this code<br>
+is to be used in my group's automation efforts.  <br>
+<br>
+Is there a way to make a GUI run one of its subfunctions<br>
+before it appears, calculate the desired answer, and return<br>
+control to the function that called it...all without<br>
+appearing on the screen?<br>
+<br>
+BTW, I've already tried executing the OK button's callback<br>
+in the GUI's OpeningFcn.<br>
+<br>
+Thanks for any help<br>
+<br>
+- Will Slater<br>
+
+        </p>
+      </td>
+    </tr>
+  </tbody></table>
+  
+
+  <a name="439576"></a>
+  <table class="threadlist" border="0" cellpadding="6" cellspacing="0" width="100%">
+    <tbody><tr class="messageheader">
+      <td>
+        <div class="messageheader">
+          <p style=""><strong>Subject:</strong> Running GUI function from command line</p>
+          <p><b>From:</b> <a href="http://www.mathworks.de/matlabcentral/newsreader/author/99892">vedenev</a></p>
+          <p><b>Date:</b> 26 Jun, 2008 10:02:20</p>
+          <p><strong>Message:</strong> 2 of 7 </p>
+        </div>
+        <div class="submenu"> 
+          <div class="submenuitem"><a href="http://www.mathworks.de/matlabcentral/newsreader/create_message?reply_id=439576">Reply to this message</a></div> 
+          <div class="submenuitem">
+            
+              <a href="http://www.mathworks.de/matlabcentral/newsreader/create_author_watchlist/99892?thread=171538" class="add">Add author to My Watch List</a>
+            
+          </div> 
+          <div class="submenuitem"><a href="http://www.mathworks.de/matlabcentral/newsreader/view_original/439576" onclick="window.open(this.href,'new_window','width=760,height=600');return false;">View original format</a></div>
+          <div class="submenuitem">
+        	
+            <a href="http://www.mathworks.de/matlabcentral/newsreader/flagged_as_spam/439576">Flag as spam</a>
+        	
+          </div> 
+        </div>
+      </td>
+    </tr>
+    <tr class="messagebody">
+      <td>
+        <p style="overflow-x: auto; width: 522px;">
+          You want to pass data inside GUI when you run the GUI from the script?<br>
+<br>
+For example you bild GUI with name my_gui.m<br>
+Use it like function:<br>
+<br>
+in the sript:<br>
+in=...<br>
+my_gui(in);<br>
+<br>
+in my_gui.m, in OpeningFcn write:<br>
+in=varargin{1};<br>
+<br>
+Now you get this "in" and you can use it for example to set in some<br>
+edit field<br>
+<br>
+------------------------------------<br>
+Maxim Vedenev, Matlab freelancer<br>
+<a href="http://simulations.narod.ru/">http://simulations.narod.ru/</a><br>
+
+        </p>
+      </td>
+    </tr>
+  </tbody></table>
+  
+
+  <a name="439647"></a>
+  <table class="threadlist" border="0" cellpadding="6" cellspacing="0" width="100%">
+    <tbody><tr class="messageheader">
+      <td>
+        <div class="messageheader">
+          <p style=""><strong>Subject:</strong> Running GUI function from command line</p>
+          <p><b>From:</b> <a href="http://www.mathworks.de/matlabcentral/newsreader/author/38053">William Slater</a></p>
+          <p><b>Date:</b> 26 Jun, 2008 15:15:04</p>
+          <p><strong>Message:</strong> 3 of 7 </p>
+        </div>
+        <div class="submenu"> 
+          <div class="submenuitem"><a href="http://www.mathworks.de/matlabcentral/newsreader/create_message?reply_id=439647">Reply to this message</a></div> 
+          <div class="submenuitem">
+            
+              <a href="http://www.mathworks.de/matlabcentral/newsreader/create_author_watchlist/38053?thread=171538" class="add">Add author to My Watch List</a>
+            
+          </div> 
+          <div class="submenuitem"><a href="http://www.mathworks.de/matlabcentral/newsreader/view_original/439647" onclick="window.open(this.href,'new_window','width=760,height=600');return false;">View original format</a></div>
+          <div class="submenuitem">
+        	
+            <a href="http://www.mathworks.de/matlabcentral/newsreader/flagged_as_spam/439647">Flag as spam</a>
+        	
+          </div> 
+        </div>
+      </td>
+    </tr>
+    <tr class="messagebody">
+      <td>
+        <p style="overflow-x: auto; width: 522px;">
+          vedenev &lt;vedenev.maxim@gmail.com&gt; wrote in message<br>
+&lt;fef17158-1b33-4301-a77b-f63b6b229772@j22g2000hsf.googlegroups.com&gt;...<br>
+&gt; You want to pass data inside GUI when you run the GUI from<br>
+the script?<br>
+&gt; <br>
+&gt; For example you bild GUI with name my_gui.m<br>
+&gt; Use it like function:<br>
+&gt; <br>
+&gt; in the sript:<br>
+&gt; in=...<br>
+&gt; my_gui(in);<br>
+&gt; <br>
+&gt; in my_gui.m, in OpeningFcn write:<br>
+&gt; in=varargin{1};<br>
+&gt; <br>
+&gt; Now you get this "in" and you can use it for example to<br>
+set in some<br>
+&gt; edit field<br>
+&gt; <br>
+&gt; ------------------------------------<br>
+&gt; Maxim Vedenev, Matlab freelancer<br>
+&gt; <a href="http://simulations.narod.ru/">http://simulations.narod.ru/</a><br>
+<br>
+Thanks for replying.  I've already passed the data to the<br>
+GUI.  The way my GUI is constructed, it won't run it's logic<br>
+until the user clicks the OK button I constructed for it. <br>
+Is there a way to simulate clicking the button and returning<br>
+the answer before the GUI displays itself?<br>
+
+        </p>
+      </td>
+    </tr>
+  </tbody></table>
+  
+
+  <a name="439680"></a>
+  <table class="threadlist" border="0" cellpadding="6" cellspacing="0" width="100%">
+    <tbody><tr class="messageheader">
+      <td>
+        <div class="messageheader">
+          <p style=""><strong>Subject:</strong> Running GUI function from command line</p>
+          <p><b>From:</b> <a href="http://www.mathworks.de/matlabcentral/newsreader/author/14999">Steven Lord</a></p>
+          <p><b>Date:</b> 26 Jun, 2008 16:51:31</p>
+          <p><strong>Message:</strong> 4 of 7 </p>
+        </div>
+        <div class="submenu"> 
+          <div class="submenuitem"><a href="http://www.mathworks.de/matlabcentral/newsreader/create_message?reply_id=439680">Reply to this message</a></div> 
+          <div class="submenuitem">
+            
+              <a href="http://www.mathworks.de/matlabcentral/newsreader/create_author_watchlist/14999?thread=171538" class="add">Add author to My Watch List</a>
+            
+          </div> 
+          <div class="submenuitem"><a href="http://www.mathworks.de/matlabcentral/newsreader/view_original/439680" onclick="window.open(this.href,'new_window','width=760,height=600');return false;">View original format</a></div>
+          <div class="submenuitem">
+        	
+            <a href="http://www.mathworks.de/matlabcentral/newsreader/flagged_as_spam/439680">Flag as spam</a>
+        	
+          </div> 
+        </div>
+      </td>
+    </tr>
+    <tr class="messagebody">
+      <td>
+        <p style="overflow-x: auto; width: 522px;">
+          <br>
+"William Slater" &lt;William.L.Slater@LMCO.com&gt; wrote in message <br>
+news:g40bpn$d06$1@fred.mathworks.com...<br>
+&gt; vedenev &lt;vedenev.maxim@gmail.com&gt; wrote in message<br>
+&gt; &lt;fef17158-1b33-4301-a77b-f63b6b229772@j22g2000hsf.googlegroups.com&gt;...<br>
+&gt;&gt; You want to pass data inside GUI when you run the GUI from<br>
+&gt; the script?<br>
+&gt;&gt;<br>
+&gt;&gt; For example you bild GUI with name my_gui.m<br>
+&gt;&gt; Use it like function:<br>
+&gt;&gt;<br>
+&gt;&gt; in the sript:<br>
+&gt;&gt; in=...<br>
+&gt;&gt; my_gui(in);<br>
+&gt;&gt;<br>
+&gt;&gt; in my_gui.m, in OpeningFcn write:<br>
+&gt;&gt; in=varargin{1};<br>
+&gt;&gt;<br>
+&gt;&gt; Now you get this "in" and you can use it for example to<br>
+&gt; set in some<br>
+&gt;&gt; edit field<br>
+&gt;&gt;<br>
+&gt;&gt; ------------------------------------<br>
+&gt;&gt; Maxim Vedenev, Matlab freelancer<br>
+&gt;&gt; <a href="http://simulations.narod.ru/">http://simulations.narod.ru/</a><br>
+&gt;<br>
+&gt; Thanks for replying.  I've already passed the data to the<br>
+&gt; GUI.  The way my GUI is constructed, it won't run it's logic<br>
+&gt; until the user clicks the OK button I constructed for it.<br>
+&gt; Is there a way to simulate clicking the button and returning<br>
+&gt; the answer before the GUI displays itself?<br>
+<br>
+If you can GET the button's Callback property (or you know the value of that <br>
+property without needing to GET it), just execute that property with the <br>
+appropriate inputs.<br>
+<br>
+-- <br>
+Steve Lord<br>
+slord@mathworks.com <br>
+<br>
+<br>
+
+        </p>
+      </td>
+    </tr>
+  </tbody></table>
+  
+
+  <a name="439682"></a>
+  <table class="threadlist" border="0" cellpadding="6" cellspacing="0" width="100%">
+    <tbody><tr class="messageheader">
+      <td>
+        <div class="messageheader">
+          <p style=""><strong>Subject:</strong> Running GUI function from command line</p>
+          <p><b>From:</b> <a href="http://www.mathworks.de/matlabcentral/newsreader/author/79852">roberson@ibd.nrc-cnrc.gc.ca (Walter Roberson)</a></p>
+          <p><b>Date:</b> 26 Jun, 2008 16:55:31</p>
+          <p><strong>Message:</strong> 5 of 7 </p>
+        </div>
+        <div class="submenu"> 
+          <div class="submenuitem"><a href="http://www.mathworks.de/matlabcentral/newsreader/create_message?reply_id=439682">Reply to this message</a></div> 
+          <div class="submenuitem">
+            
+              <a href="http://www.mathworks.de/matlabcentral/newsreader/create_author_watchlist/79852?thread=171538" class="add">Add author to My Watch List</a>
+            
+          </div> 
+          <div class="submenuitem"><a href="http://www.mathworks.de/matlabcentral/newsreader/view_original/439682" onclick="window.open(this.href,'new_window','width=760,height=600');return false;">View original format</a></div>
+          <div class="submenuitem">
+        	
+            <a href="http://www.mathworks.de/matlabcentral/newsreader/flagged_as_spam/439682">Flag as spam</a>
+        	
+          </div> 
+        </div>
+      </td>
+    </tr>
+    <tr class="messagebody">
+      <td>
+        <p style="overflow-x: auto; width: 522px;">
+          In article &lt;g40bpn$d06$1@fred.mathworks.com&gt;,<br>
+William Slater &lt;William.L.Slater@LMCO.com&gt; wrote:<br>
+<br>
+&gt;Thanks for replying.  I've already passed the data to the<br>
+&gt;GUI.  The way my GUI is constructed, it won't run it's logic<br>
+&gt;until the user clicks the OK button I constructed for it. <br>
+&gt;Is there a way to simulate clicking the button and returning<br>
+&gt;the answer before the GUI displays itself?<br>
+<br>
+Either in or immediately after the figure() statement that<br>
+creates the figure, set the figure Visible property to be 'off'.<br>
+It will then not display on the screen. It will, though, still need<br>
+the screen to -exist- (e.g., Matlab not run with -nodesktop)<br>
+in order to create and position all of the controls, whose<br>
+handles the routine probably needs in order to function properly.<br>
+<br>
+When you get to the point in the program logic where you would<br>
+like the simulated click to occur, manually call the Callback<br>
+of the OK button.<br>
+<br>
+If the callback was specified as a cell array,<br>
+<br>
+cb = get(okbutton, 'Callback');<br>
+cb{1}(okbutton, [], cb{2:end});<br>
+<br>
+-- <br>
+&nbsp;&nbsp;"[I]t lacks context, and may or may not make sense."<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--
+Walter J. Phillips<br>
+
+        </p>
+      </td>
+    </tr>
+  </tbody></table>
+  
+
+  <a name="439707"></a>
+  <table class="threadlist" border="0" cellpadding="6" cellspacing="0" width="100%">
+    <tbody><tr class="messageheader">
+      <td>
+        <div class="messageheader">
+          <p style=""><strong>Subject:</strong> Running GUI function from command line</p>
+          <p><b>From:</b> <a href="http://www.mathworks.de/matlabcentral/newsreader/author/38053">William Slater</a></p>
+          <p><b>Date:</b> 26 Jun, 2008 17:55:03</p>
+          <p><strong>Message:</strong> 6 of 7 </p>
+        </div>
+        <div class="submenu"> 
+          <div class="submenuitem"><a href="http://www.mathworks.de/matlabcentral/newsreader/create_message?reply_id=439707">Reply to this message</a></div> 
+          <div class="submenuitem">
+            
+              <a href="http://www.mathworks.de/matlabcentral/newsreader/create_author_watchlist/38053?thread=171538" class="add">Add author to My Watch List</a>
+            
+          </div> 
+          <div class="submenuitem"><a href="http://www.mathworks.de/matlabcentral/newsreader/view_original/439707" onclick="window.open(this.href,'new_window','width=760,height=600');return false;">View original format</a></div>
+          <div class="submenuitem">
+        	
+            <a href="http://www.mathworks.de/matlabcentral/newsreader/flagged_as_spam/439707">Flag as spam</a>
+        	
+          </div> 
+        </div>
+      </td>
+    </tr>
+    <tr class="messagebody">
+      <td>
+        <p style="overflow-x: auto; width: 522px;">
+          roberson@ibd.nrc-cnrc.gc.ca (Walter Roberson) wrote in<br>
+message &lt;g40hm3$7di$1@canopus.cc.umanitoba.ca&gt;...<br>
+<br>
+&gt; Either in or immediately after the figure() statement that<br>
+&gt; creates the figure, set the figure Visible property to be<br>
+'off'.<br>
+&gt; It will then not display on the screen. It will, though,<br>
+still need<br>
+&gt; the screen to -exist- (e.g., Matlab not run with -nodesktop)<br>
+&gt; in order to create and position all of the controls, whose<br>
+&gt; handles the routine probably needs in order to function<br>
+properly.<br>
+&gt; <br>
+&gt; When you get to the point in the program logic where you would<br>
+&gt; like the simulated click to occur, manually call the Callback<br>
+&gt; of the OK button.<br>
+&gt; <br>
+&gt; If the callback was specified as a cell array,<br>
+&gt; <br>
+&gt; cb = get(okbutton, 'Callback');<br>
+&gt; cb{1}(okbutton, [], cb{2:end});<br>
+&gt; <br>
+&gt; -- <br>
+&gt;   "[I]t lacks context, and may or may not make sense."<br>
+&gt;                                               -- Walter J.<br>
+Phillips<br>
+<br>
+In case I didn't mention it, this GUI was created with GUIDE<br>
+(i.e., no figure() function to edit behind).  I would like<br>
+to get the OK button's callback to execute during the<br>
+OpeningFcn callback AND return control to the main program<br>
+that called the GUI.  I can get the OK button's callback to<br>
+execute just fine, but when the OpeningFcn completes, the<br>
+GUI still pops up, waiting for user input.  After the<br>
+OpeningFcn completes, how can I make the GUI return control<br>
+to the main program without user intervention?<br>
+<br>
+
+        </p>
+      </td>
+    </tr>
+  </tbody></table>
+  
+
+  <a name="439769"></a>
+  <table class="threadlist" border="0" cellpadding="6" cellspacing="0" width="100%">
+    <tbody><tr class="messageheader">
+      <td>
+        <div class="messageheader">
+          <p style=""><strong>Subject:</strong> Running GUI function from command line</p>
+          <p><b>From:</b> <a href="http://www.mathworks.de/matlabcentral/newsreader/author/38053">William Slater</a></p>
+          <p><b>Date:</b> 26 Jun, 2008 21:33:01</p>
+          <p><strong>Message:</strong> 7 of 7 </p>
+        </div>
+        <div class="submenu"> 
+          <div class="submenuitem"><a href="http://www.mathworks.de/matlabcentral/newsreader/create_message?reply_id=439769">Reply to this message</a></div> 
+          <div class="submenuitem">
+            
+              <a href="http://www.mathworks.de/matlabcentral/newsreader/create_author_watchlist/38053?thread=171538" class="add">Add author to My Watch List</a>
+            
+          </div> 
+          <div class="submenuitem"><a href="http://www.mathworks.de/matlabcentral/newsreader/view_original/439769" onclick="window.open(this.href,'new_window','width=760,height=600');return false;">View original format</a></div>
+          <div class="submenuitem">
+        	
+            <a href="http://www.mathworks.de/matlabcentral/newsreader/flagged_as_spam/439769">Flag as spam</a>
+        	
+          </div> 
+        </div>
+      </td>
+    </tr>
+    <tr class="messagebody">
+      <td>
+        <p style="overflow-x: auto; width: 522px;">
+          I figured it out.  There's a block of code created by GUIDE<br>
+that initializes the GUI before the OpeningFcn is executed.<br>
+&nbsp;It's demarked above and below by the warning "DO NOT EDIT".<br>
+&nbsp;Ironically, this was the code I needed to edit to get the<br>
+desired result.<br>
+<br>
+Originally, the initialization code created by GUIDE looks<br>
+like this:<br>
+<br>
+<br>
+% Begin initialization code - DO NOT EDIT<br>
+gui_Singleton = 1;<br>
+gui_State = struct('gui_Name',       mfilename, ...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'gui_Singleton',
+gui_Singleton, ...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'gui_OpeningFcn',
+@MY_GUI_OpeningFcn, ...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'gui_OutputFcn',
+@MY_GUI_OutputFcn, ...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'gui_LayoutFcn',
+[], ...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'gui_Callback',
+[]);<br>
+if nargin &amp; isstr(varargin{1})<br>
+&nbsp;&nbsp;&nbsp;&nbsp;gui_State.gui_Callback = str2func(varargin{1});<br>
+end<br>
+<br>
+if nargout<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[varargout{1:nargout}] = gui_mainfcn(gui_State,<br>
+varargin{:});<br>
+else<br>
+&nbsp;&nbsp;&nbsp;&nbsp;gui_mainfcn(gui_State, varargin{:});<br>
+end<br>
+% End initialization code - DO NOT EDIT<br>
+<br>
+<br>
+To get the result I desired, I added lines to the code as such:<br>
+<br>
+<br>
+% Begin initialization code - DO NOT EDIT<br>
+gui_Singleton = 1;<br>
+gui_State = struct('gui_Name',       mfilename, ...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'gui_Singleton',
+gui_Singleton, ...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'gui_OpeningFcn',
+@MY_GUI_OpeningFcn, ...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'gui_OutputFcn',
+@MY_GUI_OutputFcn, ...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'gui_LayoutFcn',
+[], ...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'gui_Callback',
+[]);<br>
+if nargin &amp; isstr(varargin{1})<br>
+&nbsp;&nbsp;&nbsp;&nbsp;gui_State.gui_Callback = str2func(varargin{1});<br>
+end<br>
+<br>
+if nargout<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[varargout{1:nargout}] = gui_mainfcn(gui_State,<br>
+varargin{:});<br>
+&nbsp;&nbsp;&nbsp;&nbsp;if nargin &gt; 1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tool_handle = findobj('Tag', 'MY_GUIs_Name');<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MY_GUI('OK_Button_Callback', tool_handle, ...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[], guidata(tool_handle));<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;uiresume<br>
+else<br>
+&nbsp;&nbsp;&nbsp;&nbsp;gui_mainfcn(gui_State, varargin{:});<br>
+end<br>
+% End initialization code - DO NOT EDIT<br>
+<br>
+<br>
+That allowed me to feed extra inputs to the GUI, have it do<br>
+its thing, and return control to the program that called it.<br>
+&nbsp;Hopefully this bit of my personal discovery can help anyone<br>
+else who might have this issue crop up.  <br>
+<br>
+Thanks to all who commented.<br>
+<br>
+&nbsp;- Will Slater<br>
+
+        </p>
+      </td>
+    </tr>
+  </tbody></table>
+  
+
+</div>
+
+<div id="tagbox">
+  <h2 style="color: rgb(0, 0, 0); font-size: 14px;">Tags for this Thread</h2>
+
+
+  <h3>Everyone's Tags:</h3>
+  <div class="tags tag_group">
+    <span style="white-space: nowrap;"><a href="http://www.mathworks.de/matlabcentral/newsreader/search_results?search_string=control" title="control">control</a></span>, <span style="white-space: nowrap;"><a href="http://www.mathworks.de/matlabcentral/newsreader/search_results?search_string=execution" title="execution">execution</a></span>, <span style="white-space: nowrap;"><a href="http://www.mathworks.de/matlabcentral/newsreader/search_results?search_string=%22command+line%22" title="command line">command line</a></span>, <span style="white-space: nowrap;"><a href="http://www.mathworks.de/matlabcentral/newsreader/search_results?search_string=gui" title="gui">gui</a></span>
+  </div>
+
+
+
+
+<h3>Add a New Tag:</h3>
+<form action="/matlabcentral/newsreader/tag_thread" method="post">
+  <input class="formelem" id="addtext" name="text" type="text">
+  <input class="small" id="addbutton" name="commit" value="Add" type="submit">
+  <input id="thread_id" name="thread_id" value="171538" type="hidden">
+</form>
+<span class="note">Separated by commas<br>
+Ex.: root locus, bode</span>
+
+<h3>What are tags?</h3>
+<p>A tag is like a keyword or category label associated with each thread. Tags make it easier for you to find threads of interest.</p>
+<p>Anyone can tag a thread. Tags are public and visible to everyone.</p>
+
+
+
+</div>
+
+<div id="tagactivity">
+  
+    <table class="datatable3" style="margin-top: 18px;" border="0" cellpadding="0" cellspacing="0" width="500">
+      <tbody><tr>
+        <th colspan="3" style="background-color: rgb(219, 222, 227); color: rgb(0, 0, 0);">Tag Activity for This Thread</th>
+      </tr>
+      <tr>
+        <td><strong>Tag</strong></td>
+        <td><strong>Applied By</strong></td>
+        <td><strong>Date/Time</strong></td>
+      </tr>
+  
+      
+        <tr>
+            <td class="tag_group"><span style="white-space: nowrap;"><a href="http://www.mathworks.de/matlabcentral/newsreader/search_results?search_string=gui" title="gui">gui</a></span></td>
+            <td>William Slater</td>
+            <td>25 Jun, 2008 14:05:09</td>
+        </tr>
+      
+        <tr>
+            <td class="tag_group"><span style="white-space: nowrap;"><a href="http://www.mathworks.de/matlabcentral/newsreader/search_results?search_string=%22command+line%22" title="command line">command line</a></span></td>
+            <td>William Slater</td>
+            <td>25 Jun, 2008 14:05:09</td>
+        </tr>
+      
+        <tr>
+            <td class="tag_group"><span style="white-space: nowrap;"><a href="http://www.mathworks.de/matlabcentral/newsreader/search_results?search_string=execution" title="execution">execution</a></span></td>
+            <td>William Slater</td>
+            <td>25 Jun, 2008 14:05:09</td>
+        </tr>
+      
+        <tr>
+            <td class="tag_group"><span style="white-space: nowrap;"><a href="http://www.mathworks.de/matlabcentral/newsreader/search_results?search_string=control" title="control">control</a></span></td>
+            <td>William Slater</td>
+            <td>25 Jun, 2008 14:05:09</td>
+        </tr>
+      
+    </tbody></table>
+  
+</div>
+
+
+<a href="http://www.mathworks.de/matlabcentral/newsreader/thread_feed/171538"><img src="171538_files/rss.gif" alt="rss" style="margin: 10px 7px 0px 0px;" border="0" height="16" width="16"></a><a href="http://www.mathworks.de/matlabcentral/newsreader/thread_feed/171538">Feed for this Thread</a>
+<link href="http://www.mathworks.de/matlabcentral/newsreader/thread_feed/171538" rel="alternate" title="RSS" type="application/rss+xml">
+
+
+
+
+<div id="submissionpolicy">
+<h3>Public Submission Policy</h3>
+<p>NOTICE: Any content you submit to MATLAB Central, including personal
+information, is not subject to the protections which may be afforded
+information collected under other sections of The MathWorks, Inc. Web
+site. You are entirely responsible for all content that you upload,
+post, e-mail, transmit or otherwise make available via MATLAB Central.
+The MathWorks does not control the content posted by visitors to MATLAB
+Central and, does not guarantee the accuracy, integrity, or quality of
+such content. Under no circumstances will The MathWorks be liable in
+any way for any content not authored by The MathWorks, or any loss or
+damage of any kind incurred as a result of the use of any content
+posted, e-mailed, transmitted or otherwise made available via MATLAB
+Central. <a href="http://www.mathworks.de/matlabcentral/disclaimer.html" class="small">Read the complete Disclaimer prior to use.</a> </p>
+        </div><p id="contactus">Contact us at <a href="mailto:files@mathworks.com">files@mathworks.com</a></p>
+
+      <!-- START OF GLOBAL FOOTER -->
+      </div>
+<div class="clearboth">&nbsp;</div>
+      <div id="footer">
+<script type="text/javascript">
+function clickDynamic(obj, target_url, tracking_code) {
+	var pos=target_url.indexOf("?");
+	if (pos<=0) { 
+		var linkComponents = target_url + tracking_code;
+		obj.href=linkComponents;
+	} 
+}
+</script>
+        <div class="wrapper">
+          <div>
+          	
+             <ul id="mathworks">
+                   <li class="first">Featured MathWorks.com Topics:</li>
+                   <li><a href="http://www.mathworks.de/products/new_products/latest_features.html" onclick="clickDynamic(this, this.href, '?s_cid=MLC_new')">New Products</a></li>
+                   <li><a href="http://www.mathworks.de/support/" title="support" onclick="clickDynamic(this, this.href, '?s_cid=MLC_support')">Support</a></li>
+                   <li><a href="http://www.mathworks.de/access/helpdesk/help/helpdesk.html" title="documentation" onclick="clickDynamic(this, this.href, '?s_cid=MLC_doc')">Documentation</a></li>
+                   <li><a href="http://www.mathworks.de/services/training/" title="training" onclick="clickDynamic(this, this.href, '?s_cid=MLC_training')">Training</a></li>
+                   <li><a href="http://www.mathworks.de/company/events/webinars/" title="Webinars" onclick="clickDynamic(this, this.href, '?s_cid=MLC_webinars')">Webinars</a></li>
+                   <li><a href="http://www.mathworks.de/company/newsletters/" title="newsletters" onclick="clickDynamic(this, this.href, '?s_cid=MLC_newsletters')">Newsletters</a></li>
+                   <li><a href="http://www.mathworks.de/programs/trials/trial_request.html?prodcode=ML&amp;s_cid=MLC_trials" title="MATLAB Trials">MATLAB Trials</a></li>
+                   <li><a href="http://www.mathworks.de/company/jobs/" title="Careers" onclick="clickDynamic(this, this.href, '?s_cid=MLC_careers')">Careers</a></li>
+                </ul>
+                  <ul id="matlabcentral">
+                        <li class="copyright first">© 1994-2009 The MathWorks, Inc.</li>
+                        <li><a href="mailto:info@mathworks.com" title="Site Help">Site Help</a></li>
+                        <li><a href="http://www.mathworks.de/company/aboutus/policies_statements/patents.html" title="patents" rel="nofollow">Patents</a></li>
+                        <li><a href="http://www.mathworks.de/company/aboutus/policies_statements/trademarks.html" title="trademarks" rel="nofollow">Trademarks</a></li>
+                        <li><a href="http://www.mathworks.de/company/aboutus/policies_statements/" title="privacy policy" rel="nofollow">Privacy Policy</a></li>
+                        <li><a href="http://www.mathworks.de/company/aboutus/policies_statements/piracy.html" title="preventing piracy" rel="nofollow">Preventing Piracy</a></li>
+                        <li><a href="http://www.mathworks.de/company/rss/" title="RSS" rel="nofollow">RSS</a></li>
+                  </ul>           
+            </div>
+          </div>    
+        </div>      </div>
+    </div>
+  
+
+<!-- END OF GLOBAL FOOTER -->
+
+      
+      
+      <!-- SiteCatalyst code version: H.4. -->
+<script language="JavaScript" src="171538_files/s_code.js" type="text/javascript"></script><img name="s_i_mathmain" alt="" border="0" height="1" width="1">
+<script language="JavaScript" type="text/javascript"><!--
+s.pageName=document.title
+/************* DO NOT ALTER ANYTHING BELOW THIS LINE ! **************/
+var s_code=s.t();if(s_code)document.write(s_code)//--></script><img src="171538_files/s47671168051076.gif" name="s_i_mathglobal" alt="" border="0" height="1" width="1">
+<script language="JavaScript" type="text/javascript"><!--
+if(navigator.appVersion.indexOf('MSIE')>=0)document.write(unescape('%3C')+'\!-'+'-')
+//--></script><!--/DO NOT REMOVE/-->
+<!-- End SiteCatalyst code version: H.4. -->
+
+    <div id="hintbox"></div></body></html>

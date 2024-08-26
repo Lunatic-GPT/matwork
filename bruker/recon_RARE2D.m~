@@ -1,0 +1,19 @@
+function recon_RARE2D(dname)
+
+b=readbPar(fullfile(dname,'method'),'PVM_EncSteps1',true);
+a=readb_fid(dname);
+ns=readbPar(fullfile(dname,'acqp'),'NSLICES',true);
+ni=readbPar('method','PVM_NEchoImages');
+rare=readbPar('method','PVM_RareFactor');
+
+
+a2=reshape(a(:),[size(a,1),rare,ni,ns,size(a,2)]);
+a3=permute(a2,[1,2,4,3]);
+
+a4=reshape(a3,[256,256,14]);
+ra=a4;
+ra(:,b+129,:)=a4;
+figure;imshow(abs(squeeze(ra(:,:,4))),[]);
+fra=fft2c(ra);
+figure;imshow(abs(squeeze(fra(:,:,4))),[]);
+

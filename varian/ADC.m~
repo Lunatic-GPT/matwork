@@ -1,0 +1,56 @@
+function ADC(fname,tind,nte_exclude)
+% t2(fname,tind,nte_exclude)
+
+
+a=read_fid(fullfile(fname,'fid'));
+a=squeeze(a);
+a=a-repmat(mean(a(end-100:end,:),1),[size(a,1),1]);
+gdiff= readPar(fname,'gdiff');
+
+gxd=readPar(fname,'gxd');
+gyd=readPar(fname,'gyd');
+gzd=readPar(fname,'gzd');
+
+tdefx=readPar(fname,'tdefx');
+tdefy=readPar(fname,'tdefy');
+tdefz=readPar(fname,'tdefz');
+
+te=readPar(fname,'te');
+tm=readPar(fname,'tm');
+
+
+
+
+u2g=40/32767;
+
+   bx=(4258*6.28*gxd*u2g*tdefx)*(4258*6.28*gxd*u2g*tdefx)*(tm+te/2-tdefx/3)/100;
+         by=(4258*6.28*gyd*u2g*tdefy)*(4258*6.28*gyd*u2g*tdefy)*(tm+te/2-tdefy/3)/100;
+         bz=(4258*6.28*gzd*u2g*tdefz)*(4258*6.28*gzd*u2g*tdefz)*(tm+te/2-tdefz/3)/100;
+         
+bval=bx+by+bz;
+
+aa = abs(a);
+b= mean(aa(tind,:),1);
+
+figure;
+plot(real(a(:,1)),'r');
+hold on;
+plot(imag(a(:,1)),'b');
+plot(abs(a(:,1)),'k');
+
+plot([min(tind)+1,min(tind)+1],ylim,'k');
+plot([max(tind)+1,max(tind)+1],ylim,'k');
+
+figure;
+plot(te,log10(b),'o');
+[te,te_ind] = sort(te);
+b = b(te_ind);
+beta=nlinfit(te(1:end-nte_exclude+1),b(1:end-nte_exclude+1),@exp_decay,[max(b),0.1]);
+hold on;
+fprintf('T2 = %4.3f s\n',beta(2));
+x=linspace(0,max(te));
+plot(x,log10(T2exp(beta,x)),'k');
+
+
+
+

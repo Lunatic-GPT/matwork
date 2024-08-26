@@ -1,0 +1,6 @@
+when nCGIter = 1; each split iteration 20 s
+when nCGIter = 2; each split iteration 29 s
+when nCGIter = 3; each split iteration 36 s
+
+NUFFT3D.mtimes 25 for five iterations; each 5 times;
+

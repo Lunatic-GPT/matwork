@@ -1,0 +1,16 @@
+function res = mtimes(a,b)
+
+    
+if a.adjoint
+      
+res = 1/sqrt(size(b,4))*fft(b,[],4);
+
+else
+ 
+res = ifft(b,[],4);
+end
+
+
+
+
+    

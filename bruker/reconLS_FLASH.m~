@@ -1,0 +1,43 @@
+function reconLS_FLASH(a)
+
+d=readb_fid(a);
+
+sw=readbPar(fullfile(a,'method'),'PVM_EffSWh');
+D=readbPar(fullfile(a,'acqp'),'D');
+pe=readbPar(fullfile(a,'acqp'),'ACQ_spatial_phase_1');
+NR = readbPar(fullfile(a,'method'),'PVM_NRepetitions');
+kzero = find(pe==0);
+riset=D(4);
+
+rampt = D(5);%readbPar(fullfile(a,'method'),'PVM_RampTime');
+
+askip = round((riset+rampt)*sw);
+mtrx=readbPar(fullfile(a,'method'),'PVM_Matrix');
+pe=round(pe*mtrx(1)/2)+mtrx(1)/2+1;
+nav=d(askip+1:askip+mtrx(1),:,:,:);
+data=d(end-mtrx(1)+1:end,:,:,:);
+data=reshape(data,[mtrx(1),NR,mtrx(2)]);
+if mod(NR,length(pe)/mtrx(2))~=0
+   error('mod(NR,length(pe)/mtrx(2))~=0');
+end
+iNR = length(pe)/mtrx(2)
+pe=reshape(pe(1:NR*mtrx(2)),[NR,mtrx(2)]);
+pe=pe';
+data=permute(data,[1,3,2]);
+
+d2=zeros(size(data));
+for i=1:NR
+  d2(:,pe(:,i),i)=data(:,:,i);
+end
+d2=reshape(d2,[mtrx,1,NR]);
+img=fft2c(d2);
+
+write_afni(abs(img),[a,'_recon']);
+figure;
+plot(abs(nav(:,1,1,1,1)));
+hold on;
+y=flipdim(data(:,kzero(1)),1);
+
+plot(abs(y),'r');
+
+legend('Nav Echo','k=0 data');

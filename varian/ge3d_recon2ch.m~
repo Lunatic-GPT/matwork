@@ -1,0 +1,73 @@
+function img =ge3d_recon2ch(fid_prefix)
+% tbgemsShaper(fid_dir,format)
+% first dim: ro; second dim: pe; third dim: slice;
+% 1/22/2011: Wrote it. Tested for single-slice 2D data. XZ
+% format: output format: 'a': afni format. 's': sdt format.
+
+fid_dir=[fid_prefix,'.fid'];
+
+prefix = fid_prefix;
+
+z = read_fid(fullfile(fid_dir,'fid'));
+z=reshape(z,[size(z,1),size(z,2),2,size(z,3)/2]);
+z=permute(z,[1,2,4,3]);
+
+z = squeeze(z);
+z = dcCorr(z);
+
+z_shft = circshift(z,[size(z,1)/2,size(z,2)/2,size(z,3)/2,0]);
+fz1 = fftn(z_shft(:,:,:,1));
+fz2 = fftn(z_shft(:,:,:,2));
+
+
+fz=cat(4,fz1,fz2);
+
+img = fz;
+
+fz = circshift(fz,[size(z,1)/2,size(z,2)/2,size(z,3)/2,0]);
+
+lro = readPar(fid_dir,'lro');%in cm
+lpe = readPar(fid_dir,'lpe');%in cm
+lpe2 = readPar(fid_dir,'lpe2');%in mm
+
+img=flipdim(img,1);
+
+
+    pro=readPar(fid_dir,'pro'); %in cm
+    ppe=readPar(fid_dir,'ppe'); %in cm
+    ppe2=readPar(fid_dir,'ppe2'); %in cm
+    sz=size(img);
+    delta = [lro*10/sz(1),lpe*10/sz(2),lpe2*10/sz(3)];
+        
+    orig_delta(1,:) = [pro,ppe,ppe2]*10-delta.*(sz(1:3)/2-[0.5,0.5,0.5]);
+    orig_delta(2,:) = delta;
+    
+ %   [img,orig_delta] = reorient_data(img,orig_delta,orient(2:end-1));
+    orig_delta(:,[1,3])=-orig_delta(:,[1,3]);
+    info.ORIGIN = orig_delta(1,:);
+    info.DELTA = orig_delta(2,:);
+    write_afni(abs(img),info,[prefix,'_mag']);
+    
+    write_afni(angle(img),info,[prefix,'_ph']);
+    
+
+    
+    
+%seqcon = read_par(fullfile(fid_dir,'procpar'),'seqcon');
+if nargout ==0
+ fprintf('ge3d_recon finished. Image dimensions:%d*%d*%d\n',size(img,1),size(img,2),size(img,3));
+ img = '';
+end
+
+function z = dcCorr(z_tmp)
+        
+ NUM_DC_SUM = 8;
+ ave1= mean(z_tmp(1:NUM_DC_SUM/2,:,:,:),1);
+ ave2= mean(z_tmp(end-NUM_DC_SUM/2+1:end,:,:,:),1);
+
+ ave=(ave1+ave2)/2;
+        
+% ave3 = mean(ave,2);       
+ z=z_tmp-repmat(ave,[size(z_tmp,1),1,1,1]);
+        
+

@@ -1,0 +1,20 @@
+function brecon2afni(d,irecon)
+
+if ~exist('irecon','var')
+    irecon=1;
+end
+
+im=read_2dseq(d,irecon);
+nr=readbPar(fullfile(d,'acqp'),'NR',true);
+ni=readbPar(fullfile(d,'acqp'),'NI',true);
+ns=readbPar(fullfile(d,'acqp'),'NSLICES',true);
+im=reshape(im,[size(im,1),size(im,2),size(im,3)/nr/ni*ns,nr*ni/ns]);
+
+
+if irecon==1
+write_afni(im,d);
+else
+    write_afni(im,[d,'_',num2str(irecon)]);
+end
+
+

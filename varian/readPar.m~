@@ -1,0 +1,19 @@
+function val = readPar(parfile,field)
+%val = readPar(parfile,field)
+
+%fid=fopen(parfile);
+
+%a=textscan(fid,'%s%s%s%s%s%s%s%s%s%s%s','delimiter',' ');
+a=textread(parfile,'%s%s%s%s%s%s%s%s%s%s%s',);
+for i=1:size(a{1})
+    if strcmp(a{1}{i},field)
+        val = a{2}{i+1};
+     
+        if ~isempty(str2num(val))
+            
+            val = str2num(val);
+        end
+            
+        return;
+    end
+end

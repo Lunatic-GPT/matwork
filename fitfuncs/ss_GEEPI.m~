@@ -1,0 +1,12 @@
+function s=ss_GEEPI(b,x)
+%s=ss_GEEPI(fa,TR,TE,T1,T2s)
+
+T1=2;
+TR=0.01;
+
+fa
+fa=fa*pi/180;
+e1=exp(-TR/T1);
+
+s=b(1)*sin(fa)*(1-e1)/(1-cos(fa)*e1);
+

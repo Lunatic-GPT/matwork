@@ -1,0 +1,10 @@
+function read_fdf(fname)
+
+fid = fopen(fname,'r');
+
+while 1
+    
+    a=fgets(fid,1);
+    disp(a);
+end
+

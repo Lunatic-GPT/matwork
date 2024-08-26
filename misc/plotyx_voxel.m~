@@ -1,0 +1,43 @@
+function plotyx_voxel(d,i,j,k,x,fit_func)
+
+i=i+1;
+j=j+1;
+k=k+1;
+if ~exist('nvoxels','var')
+    nvoxels=3;
+end
+
+
+if isa(d,'char')
+    d= BrikLoad(d);
+end
+if ndims(d) ==3
+    d = reshape(d,[size(d,1),size(d,2),1,size(d,3)]);
+end
+
+
+ts = d(i,j,k,:);
+
+figure;
+w = size(ts,1);
+h = size(ts,2);
+h2 = size(ts,3);
+for i1=1:w
+    for i2=1:h
+        for i3=1:h2
+            
+            
+          ind = ((i3-1)*h+i2-1)*w+i1;
+          
+          subplot(h*h2,w,ind);
+          y = squeeze(ts(i1,i2,:));
+          plot(x,y,'ko');
+          ttl = sprintf('(%d,%d,%d)',i(i1)-1,j(i2)-1,k(i3)-1);
+          title(ttl);
+          
+          
+        end
+    end
+end
+
+

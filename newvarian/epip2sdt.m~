@@ -1,0 +1,261 @@
+function epip2sdt(d)
+
+
+%d2=[d,'.fid'];
+d1=[d,'.img'];
+d3=[d,'_iphs.img'];
+d4=[d,'_re.img'];
+d5=[d,'_im.img'];
+
+d6=[d,'_mag.img'];
+
+if ~exist(d1,'dir')
+    d1=d;
+end
+
+
+ns = readPar(d1,'ns');
+nread=readPar(d1,'nread');
+nphase=readPar(d1,'nphase');
+nread=nread/2;
+
+str=dir(fullfile(d1,'*.fdf'));
+if mod(length(str),ns)~=0
+    error('number of files wrong');
+end
+
+ad=length(str)/ns;
+
+b=zeros(nread,nphase,ns,ad);
+ph=zeros(nread,nphase,ns,ad);
+br=zeros(nread,nphase,ns,ad);
+bi=zeros(nread,nphase,ns,ad);
+bm=zeros(nread,nphase,ns,ad);
+
+for i=1:ns
+    for j=1:ad
+    
+     name = sprintf('slice%03dimage%03decho001.fdf',i,j);
+
+     tmp=read_fdf(fullfile(d1,name));
+     b(:,:,i,j)=squeeze(tmp);
+     
+     if exist(d3,'dir')
+      tmp=read_fdf(fullfile(d3,name));
+      ph(:,:,i,j)=squeeze(tmp);
+     end
+     
+     if exist(d4,'dir')
+      tmp=read_fdf(fullfile(d4,name));
+      br(:,:,i,j)=squeeze(tmp);
+     end
+     
+     if exist(d5,'dir')
+      tmp=read_fdf(fullfile(d5,name));
+      bi(:,:,i,j)=squeeze(tmp);
+     end
+     
+     if exist(d6,'dir')
+       tmp=read_fdf(fullfile(d6,name));
+       bm(:,:,i,j)=squeeze(tmp);
+     end
+     
+    end
+end
+
+orient = readPar(d1,'orient');
+orient=orient(2:end-1);
+
+%if length(pss)>1 
+ %   [pss_sort,isort]=sort(pss);
+ %   b=b(:,:,isort,:);
+%end
+
+%In stimulate: first dimesion is l2r;  second dimension is u2d with
+%increasing index
+ % varian lab coordinates: [x,y,z] = [R2L,P2A,S2I] in roi panel;
+ 
+% stimulate display same as vnmrj display
+
+switch orient 
+    case 'trans90'  %1,2,3 in b - l2r,u2d in stimulate - l2r, a2p,s2i in vnmrj
+   
+   b=flipdim(b,2);  
+   b=flipdim(b,1);  
+  order = {'L2R','A2P','S2I'};
+   
+  case 'trans'
+   b = permute(b,[2,1,3,4]);   %do I really need this? yes 
+   b=flipdim(b,2); 
+   order={'L2R','A2P','S2I'};
+   
+ case 'sag90'  % 1,2 in b - l2r, u2d in stimulate - a2p, s2i in vnmrj
+  %  b = permute(b,[2,1,3,4]);
+      b=flipdim(b,1);    
+      b=flipdim(b,2);
+      order = {'A2P','S2I','L2R'};
+      
+    case 'sag' % 1,2 in b - l2r, u2d in stimulate - a2p, s2i in vnmrj
+      b=permute(b,[2,1,3,4]);   
+      b=flipdim(b,2); 
+      order = {'A2P','S2I','L2R'};
+      
+    case 'cor90'  
+      b=  flipdim(b,1);
+      b=flipdim(b,2);
+      order = {'L2R','S2I','P2A'};
+    case 'cor'
+      b=permute(b,[2,1,3,4]);
+     b=flipdim(b,2);
+      
+      order = {'L2R','S2I','P2A'};
+      
+    otherwise
+        
+end
+
+[sgn,pm]=reorient(order);
+disp
+tmp=b;
+for i=1:3
+    if sgn(i)==-1
+        tmp=flipdim(tmp,i);
+    end
+end
+
+afni=permute(tmp,pm);
+    
+
+if exist(d3,'dir')  
+  writesdt4(ph,[d,'_iphs']);
+end
+
+if exist(d4,'dir')  
+  writesdt4(br,[d,'_re']);
+end
+if exist(d5,'dir')  
+  writesdt4(bi,[d,'_im']);
+%  writesdt4(angle(br+1i*bi),[d,'_angle']);
+end
+
+if exist(d6,'dir')  
+  writesdt4(bm,[d,'_mag']);
+end
+
+writesdt4(b,d);
+
+%%
+
+
+lro = readPar(d,'lro');%in cm
+lpe = readPar(d,'lpe');%in cm
+thk = readPar(d,'thk');%in mm
+tr = readPar(d,'tr');
+pss=readPar(d,'pss'); %in cm
+%img = slice_reorder(img,pss);    
+
+    pro=readPar(d,'pro'); %in cm
+    ppe=readPar(d,'ppe'); %in cm
+    sz=size(afni);
+    if length(pss)>1
+        pss_sort = sort(pss);
+        thk = (pss_sort(2)-pss_sort(1))*10;  %pss in cm 
+    end
+    
+    
+       
+    %varian convention:
+    %              axial;  axial90;  coronal; coronal90; sag;  sag90   
+    %- to +    pro: A2P;    L2R;      S2I;     L2R;      S2I;  A2P;
+    %- to +    ppe: R2L;    A2P;      R2L;     S2I;      P2A;  S2I;
+    %- to +    pss: S2I;    S2I;      P2A;     P2A;      L2R;  L2R;
+    %  
+    %     
+    % varian lab coordinates: [x,y,z] = [R2L,P2A,S2I] in roi panel;
+    [sgn,pm]=reorient(orient);
+    center = [pro,ppe,mean(pss)];
+    delta = [lro*10/nread,lpe*10/nphase,thk];
+    
+    center= center.*sgn;
+    center=permute(center,pm);
+    
+    delta=permute(delta,pm);
+    delta([1,3])=-delta([1,3]);
+          
+    %    
+  %   [img,orig_delta] = reorient_data(img,orig_delta,orient(2:end-1));
+  %   should not need to reorient if data is from sdt file.  6/4/2012
+     
+    info.ORIGIN = center-delta.*(sz(1:3)/2-[0.5,0.5,0.5]);
+    info.DELTA = delta;
+    info.TAXIS_FLOATS = [0,tr,0,0,0];
+    info.ORIENT_SPECIFIC = [1 3 5]; %L2R,A2P,S2I  % afni convention + is R2L, A2P, I2S
+    write_afni(afni,info,d);
+
+    function [sgn,pm]=reorient(orient)
+        
+        sgn=zeros(1,3);
+        pm=zeros(1,3);
+ 
+   if ~iscell(orient)
+            
+    switch orient
+        case 'axial'
+            order = {'A2P','R2L','S2I'};
+        case 'axial90'
+            order = {'L2R','A2P','S2I'};
+        case 'coronal'
+            order = {'S2I','R2L','P2A'};
+        case 'coronal90'
+            order = {'L2R','S2I','P2A'};
+        case 'sag'
+            order = {'S2I','P2A','L2R'};
+        case 'sag90'
+            order = {'A2P','S2I','L2R'};
+        otherwise
+    end
+   
+   else
+       order=orient;
+   end
+    %              axial;  axial90;  coronal; coronal90; sag;  sag90   
+    %- to +    pro: A2P;    L2R;      S2I;     L2R;      S2I;  A2P;
+    %- to +    ppe: R2L;    A2P;      R2L;     S2I;      P2A;  S2I;
+    %- to +    pss: S2I;    S2I;      P2A;     P2A;      L2R;  L2R;
+    
+       for i=1:3 
+        switch order{i}
+            case 'R2L'
+             sgn(i)=1;
+             pm(1)=i; 
+            case 'L2R'
+              sgn(i)=-1;
+              pm(1)=i;
+            case 'A2P'
+              sgn(i)=1;
+              pm(2)=i;
+            case 'P2A'
+               sgn(i)=-1;
+               pm(2)=i;
+            case 'I2S'
+               sgn(i)=1;
+               pm(3)=i;
+            case 'S2I'
+              sgn(i)=-1;
+              pm(3)=i;
+            otherwise
+                error('unknow directin');
+                
+        end
+       end
+       
+       
+       
+                
+                
+          
+    
+    
+          
+          
+          

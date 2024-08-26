@@ -1,0 +1,6 @@
+1. After editing a text box, click on the image to exit from the text box.  Otherwise, shortcuts keys may be entered into the text box.
+
+2. Draw ROIs in the plane roughly parallel to the venules. 
+
+need image processing and bioinformatics toolboxes
+

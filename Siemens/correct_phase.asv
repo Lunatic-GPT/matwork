@@ -1,0 +1,69 @@
+function fl_fq_pc(dname,mask_factor,roi_name)
+% fl_fq_pc(dname,mask_factor,roi_name)
+% mask_factor: intensity threshold scale; threshold =
+% mask_factor*max_intensity; default: 0.05.
+% roi_name: can be a mask file or a dicom folder.  In the later, mask will
+% be generated from 0.1*max(d(:))
+
+if ~exist('mask_factor','var')
+    mask_factor=0.1;
+end
+
+if isa(roi_name,'char')
+    
+    m=ri(roi_name);
+    
+        m=m(:,:,:,1)>mask_factor*max(m(:));
+        
+        figure;imshow4(double(m),[],[1,size(m,3)]);
+    
+else
+    m=roi_name;
+end
+
+
+a=ri(dname);
+
+a_max=max(a(:));
+a_min=min(a(:));
+
+a=(a-(a_min+a_max)/2)/(a_max-a_min)*360;
+
+x=[];
+y=[];
+
+for k=1:size(a,4)
+    
+    for sl=1:size(a,3)
+        pos=ind2subb(size(m(:,:,sl)),find(m(:,:,sl)>0));
+        a_tmp=a(:,:,sl,k);
+        y=a_tmp(m(:,:,sl)>0);
+        
+        x=[pos,ones(size(pos,1),1),pos.^2];
+        
+        b=inv(x'*x)*x'*y;
+        %b=x\y;
+        
+        %%{
+        %figure;plot(y,x*b,'o');
+        %hold on;plot([min(y),max(y)],[min(y),max(y)],'r-');
+        %ylim([min(x*b),max(x*b)]);
+        %}
+        for i=1:size(a,1)
+            for j=1:size(a,2)
+                a(i,j,sl,k)=a(i,j,sl,k)-[i,j,1,i^2,j^2]*b;
+            end
+        end
+    end
+    
+end
+%%
+
+if strcmp(dname(end-3:end),'.mat')
+dname=dname(1:end-4);
+
+else
+dname=strtok(dname,'.');
+end
+save([dname,'_detrend.mat'],'a');
+

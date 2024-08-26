@@ -1,0 +1,3 @@
+function logy
+
+get(gca,'

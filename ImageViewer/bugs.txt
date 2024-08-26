@@ -1,0 +1,2 @@
+In matlab2020b, need to add
+if length(fname)>7&&strcmp(fname(end-6:end),'.mldatx')fname=fname(1:end-7);end

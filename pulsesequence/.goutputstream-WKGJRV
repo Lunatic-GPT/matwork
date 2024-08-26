@@ -1,0 +1,64 @@
+function hyperbolicSecan_vnmrj(tdf,df,beta,A,npts,thk,fname)
+% hyperbolicSecan_vnmrj(tdf,t,beta,A,npts,thk[,fname])
+% tdf: Time * bandwidth
+% df : bandwidth in kHz
+% beta: rate of change in rad.kHz
+% A : field in Gauss.
+% npts: number of points
+% thk: thickness in cm
+t = tdf/df;
+mu = df*pi/beta;
+
+
+gamma = 2*pi*4.257; %rad.kHz/Gauss
+
+gz = df*2*pi/gamma/thk;
+
+fprintf('Gz = %3.2f\n',gz);
+A2 = pi*df/sqrt(mu)/gamma;
+
+fprintf('A = %f (should be >> %f)\n',A,A2);
+
+
+ta = (-(npts-1)/2:(npts-1)/2)*t/npts;
+
+m = A*sech(beta*ta);
+
+ph = mu*log(sech(beta*ta));
+
+
+rf = m.*cos(ph)+1i*m.*sin(ph);
+figure;plot(ta,[real(rf(:)) imag(rf(:))]);
+
+
+gr = gz*ones(size(rf));
+T1 = 1.01;
+T2 = 0.2;
+dz = -thk*4:0.01:thk*4;
+
+[mx,my,mz]=bloch(rf,gr,t/1000/npts,T1,T2,0,dz,0);
+
+figure;plot(dz,[mx(:) my(:) mz(:)]);
+legend('mx','my','mz');
+%	[mx,my,mz] = bloch(b1,gr,tp,t1,t2,df,dp,mode,mx,my,mz)
+if exist('fname','var')
+fid = fopen([fname,'.rho'],'w','ieee-be');
+
+m = round(m*(2^15-2)/max(m));
+fwrite(fid,m,'int16');
+fclose(fid);
+
+fid = fopen([fname,'.pha'],'w','ieee-be');
+ph = mod(ph,2*pi)-pi;
+ph = round(ph*(2^15-2)/pi);
+
+fwrite(fid,ph,'int16');
+fclose(fid);
+
+end
+
+
+
+
+
+

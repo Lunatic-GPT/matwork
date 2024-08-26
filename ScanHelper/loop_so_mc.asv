@@ -1,0 +1,93 @@
+function loop_so_mc(pvsscan,server)
+% pvsscan: which pvs scan to use; skip if set to 0
+if ~exist('pvsscan','var')
+  pvsscan=1;
+end
+
+if ~exist('server','var')
+  server='andrew';
+end
+
+if pvsscan>=1
+    
+   while 1
+    dcm2dir;   
+    id=image_ready(pvsscan);
+    if id>0
+        break;
+    end
+   end
+   fprintf('segment pvs scan %d...\n',id);
+   dcm2pvs(num2str(id),server,1);
+else
+   id=image_ready(abs(pvsscan)); 
+end
+
+    
+while 1
+   
+    ref=
+     
+     so_mc(ref,fpos_base,fpos);
+     pause(1); 
+end 
+     
+%% assume the file name convention will not change after files removed from the output folder     
+function dcm2dir
+
+for i=1:999
+ dir_str=dir(sprintf('001_%06d_*.dcm',i));
+ if ~isempty(dir_str)
+     mkdir(num2str(i));
+     for j=1:length(dir_str)
+       movefile(fullfile(dir_str(j).folder,dir_str(j).name),num2str(i));
+     end
+ end
+end
+
+function res=image_ready(pvsscan)
+% the pvsscan'th pvs scan is ready.
+
+count=0;
+res=0;
+for i=1:999
+
+    if ~exist(fullfile(pwd,num2str(i)),'dir')
+        break;
+    end
+    
+    if ispvs(i) 
+        count=count+1;
+    end
+    
+    if count==pvsscan      
+        res=i;
+        break;
+    end
+
+    
+end
+
+
+function res=ispvs(i)
+%% check whether the scan is a pvs scan and has all the files ready
+res=false;
+
+   a=readdPar(num2str(i),'SequenceName');
+   if strcmp(a,'spc3d1_187ns')
+    
+       dir_str=dir(fullfile(num2str(i),'*.dcm'));
+       
+       if length(dir_str)==248
+          res=true;
+       end
+       
+   end
+   
+   
+   
+
+
+
+
+

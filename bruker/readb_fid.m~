@@ -1,0 +1,58 @@
+function res=readb_fid(d)
+
+if ~exist('d','var')
+    d=pwd;
+end
+
+
+sz=readbPar(fullfile(d,'acqp'),'ACQ_size',true);
+
+nr=readbPar(fullfile(d,'acqp'),'NR',true);
+%na=readbPar(fullfile(d,'acqp'),'NA',true);
+
+if numel(sz)>1
+ ns = readbPar(fullfile(d,'acqp'),'NSLICES',true);
+else
+    ns=1;
+end
+
+fid=fopen(fullfile(d,'fid'),'r','ieee-le');
+
+fmt=readbPar(fullfile(d,'acqp'),'GO_raw_data_format',false);
+
+if strcmp(fmt,'GO_32BIT_SGN_INT')
+ res=fread(fid,'int32');
+ 
+else
+    fprintf('%s :',fmt);
+    error('unknown format');
+end
+
+bs=readbPar(fullfile(d,'acqp'),'GO_block_size',false);
+
+if strcmp('Standard_KBlock_Format',bs);
+ sz(1)=2.^ceil(log2(sz(1)));
+ sz1_old=sz(1);
+end
+
+acqmod=readbPar(fullfile(d,'acqp'),'ACQ_experiment_mode',false);
+if ~strcmp('SingleExperiment',acqmod)
+    rcvrs=readbPar(fullfile(d,'acqp'),'ACQ_ReceiverSelect',false);
+    nyes=strmatch('Yes',rcvrs);
+    nch=length(nyes);    
+   
+else
+    nch=1;
+end
+
+%res=res(1:2:end-1)+1i*res(2:2:end);
+ 
+
+res=reshape(res,[sz(1)/2,2,nch,sz(2:end),ns,nr]);
+
+res=res(:,1,:,:,:,:,:)+1i*res(:,2,:,:,:,:,:);
+res=squeeze(res(1:sz1_old/2,:,:,:,:,:,:));
+
+
+
+

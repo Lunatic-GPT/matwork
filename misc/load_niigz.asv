@@ -1,0 +1,7 @@
+function load_niigz(name,prefix)
+
+zip(name);
+
+save_nii(nii,[prefix,'.nii']);
+gzip([prefix,'.nii']);
+delete([prefix,'.nii']);

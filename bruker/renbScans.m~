@@ -1,0 +1,17 @@
+function renbScans(maxScan)
+
+for i=1:maxScan
+    
+    orig=num2str(i);
+    if exist(num2str(i),'dir')
+      pulprog=readbPar(fullfile(num2str(i),'acqp'),'PULPROG',false);
+        pulprog=pulprog{1};
+    end
+    
+    if exist(fullfile(orig,'fid'),'file')
+     nf=dir([pulprog(2:end-5),'*']);
+     dest=sprintf('%s_%d',pulprog(2:end-5),length(nf)+1);
+     fprintf('Rename %s to %s\n',orig,dest);
+     movefile(orig,dest);
+    end
+end
